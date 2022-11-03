@@ -2,6 +2,8 @@ package com.springboot.demo.controller;
 
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +47,9 @@ public class DepartmentController {
 		departmentService.deleteDepartmentById(id);
 	}
 	
-	
+	@GetMapping("/departments/search/name")
+	public Department getDepartmentById(@PathParam(value = "departmentName") String departmentName) {
+		return departmentService.getDepartmentByName(departmentName);
+	}
 	
 }
