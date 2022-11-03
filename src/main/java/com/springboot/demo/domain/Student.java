@@ -1,32 +1,28 @@
 package com.springboot.demo.domain;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Department {
-	
+public class Student {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long departmentId;
-	private String departmentName;
-	private String departmentAddress;
-	private String departmentCode;
+	private Long studentId;
+	private String studentName;
+	private String studentEmail;
+	private String studentCode;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "department")
-    private List<Student> students;
-
+	@ManyToOne
+    @JoinColumn(name = "departmentId", referencedColumnName = "departmentId", nullable = false)
+    private Department department;
 }

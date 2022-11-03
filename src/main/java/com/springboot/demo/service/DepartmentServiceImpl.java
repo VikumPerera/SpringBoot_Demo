@@ -7,17 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springboot.demo.domain.Department;
+import com.springboot.demo.dto.DepartmentDTO;
+import com.springboot.demo.exception.TransformerException;
 import com.springboot.demo.repository.DepartmentRepository;
+import com.springboot.demo.transformer.DepartmentTransformer;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 	
 	@Autowired
 	DepartmentRepository departmentRepository;
+	
+	@Autowired
+	DepartmentTransformer departmentTransformer;
 
 	@Override
-	public Department saveDepartment(Department department) {
-		return departmentRepository.saveAndFlush(department);
+	public DepartmentDTO saveDepartment(DepartmentDTO departmentDTO) {
+		try {
+			
+			Department department = departmentTransformer.transformDTOToDomain(departmentDTO);
+			department.getStudents().stream().forEach(student -> student.setDepartment(department));
+			return departmentTransformer.transformDomainToDTO(departmentRepository.saveAndFlush(department));
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

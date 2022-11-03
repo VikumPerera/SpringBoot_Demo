@@ -2,6 +2,7 @@ package com.springboot.demo.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.demo.domain.Department;
+import com.springboot.demo.dto.DepartmentDTO;
 import com.springboot.demo.service.DepartmentService;
 
 @RestController
@@ -23,8 +25,8 @@ public class DepartmentController {
 	private DepartmentService departmentService;
 	
 	@PostMapping("/departments")
-	public Department saveDepartment(@RequestBody Department department) {
-		return departmentService.saveDepartment(department);
+	public DepartmentDTO saveDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) {
+		return departmentService.saveDepartment(departmentDTO);
 	}
 	
 	@GetMapping("/departments/{id}")

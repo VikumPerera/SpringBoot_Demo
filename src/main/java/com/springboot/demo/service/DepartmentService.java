@@ -3,11 +3,12 @@ package com.springboot.demo.service;
 import java.util.List;
 
 import com.springboot.demo.domain.Department;
+import com.springboot.demo.dto.DepartmentDTO;
 
 
 public interface DepartmentService {
 
-	Department saveDepartment(Department department);
+	DepartmentDTO saveDepartment(DepartmentDTO departmentDTO);
 
 	Department getDepartmentById(Long id);
 
