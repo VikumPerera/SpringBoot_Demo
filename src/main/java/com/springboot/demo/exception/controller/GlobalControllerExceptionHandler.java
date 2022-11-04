@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -33,8 +34,18 @@ public class GlobalControllerExceptionHandler{
 		ResultsDTO response = new ResultsDTO();
 		response.setMessage(new MessageDTO(TRANSFORMER_EXCEPTION));
 		response.setResultStatus(ResultStatus.FAILED);
-		response.setHttpStatus(HttpStatus.NOT_FOUND);
-		response.setHttpCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
+		response.setHttpStatus(HttpStatus.CONFLICT);
+		response.setHttpCode(String.valueOf(HttpStatus.CONFLICT.value()));
+		return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+	}
+	
+	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
+	protected ResponseEntity<ResultsDTO> handleConstraintViolationException(MethodArgumentNotValidException ex, HttpServletResponse httpServletResponse) {
+		ResultsDTO response = new ResultsDTO();
+		response.setMessage(new MessageDTO(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
+		response.setResultStatus(ResultStatus.FAILED);
+		response.setHttpStatus(HttpStatus.BAD_REQUEST);
+		response.setHttpCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
