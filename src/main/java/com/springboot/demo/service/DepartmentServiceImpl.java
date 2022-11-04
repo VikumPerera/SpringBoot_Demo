@@ -3,9 +3,14 @@ package com.springboot.demo.service;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.EntityNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.demo.constant.EntityNotFoundConstatnt;
 import com.springboot.demo.domain.Department;
 import com.springboot.demo.dto.DepartmentDTO;
 import com.springboot.demo.exception.TransformerException;
@@ -20,50 +25,49 @@ public class DepartmentServiceImpl implements DepartmentService {
 	
 	@Autowired
 	DepartmentTransformer departmentTransformer;
+	
+	private final Logger LOGGER =LoggerFactory.getLogger(DepartmentService.class);
 
 	@Override
-	public DepartmentDTO saveDepartment(DepartmentDTO departmentDTO) {
-		try {
-			
-			Department department = departmentTransformer.transformDTOToDomain(departmentDTO);
-			department.getStudents().stream().forEach(student -> student.setDepartment(department));
-			return departmentTransformer.transformDomainToDTO(departmentRepository.saveAndFlush(department));
-		} catch (TransformerException e) {
-			e.printStackTrace();
+	public DepartmentDTO saveDepartment(DepartmentDTO departmentDTO) throws TransformerException {
+		Department department = departmentTransformer.transformDTOToDomain(departmentDTO);
+		department.getStudents().stream().forEach(student -> student.setDepartment(department));
+		return departmentTransformer.transformDomainToDTO(departmentRepository.saveAndFlush(department));
+	}
+
+	@Override
+	public DepartmentDTO getDepartmentById(Long id) throws EntityNotFoundException, TransformerException {
+		if (!departmentRepository.existsById(id)) {
+			throw new EntityNotFoundException(EntityNotFoundConstatnt.DEPARTMENT_NOT_FOUND + id);
 		}
-		return null;
+		return departmentTransformer.transformDomainToDTO(departmentRepository.findById(id).get());
 	}
 
 	@Override
-	public Department getDepartmentById(Long id) {
-		return departmentRepository.findById(id).get();
+	public List<DepartmentDTO> getAllDepartments() throws TransformerException {
+		return departmentTransformer.transformDomainToDTO(departmentRepository.findAll());
 	}
 
 	@Override
-	public List<Department> getAllDepartments() {
-		return departmentRepository.findAll();
-	}
-
-	@Override
-	public Department updateDepartmentById(Long id, Department department) {
+	public DepartmentDTO updateDepartmentById(Long id, DepartmentDTO departmentDTO) throws TransformerException {
 		Department savedDepartment = departmentRepository.findById(id).orElse(null);
 		
 		if (null != savedDepartment) {
-			if (Objects.nonNull(department.getDepartmentName()) && !"".equalsIgnoreCase(department.getDepartmentName())) {
-				savedDepartment.setDepartmentName(department.getDepartmentName());
+			if (Objects.nonNull(departmentDTO.getDepartmentName()) && !"".equalsIgnoreCase(departmentDTO.getDepartmentName())) {
+				savedDepartment.setDepartmentName(departmentDTO.getDepartmentName());
 			}
-			if (Objects.nonNull(department.getDepartmentAddress()) && !"".equalsIgnoreCase(department.getDepartmentAddress())) {
-				savedDepartment.setDepartmentAddress(department.getDepartmentAddress());
+			if (Objects.nonNull(departmentDTO.getDepartmentAddress()) && !"".equalsIgnoreCase(departmentDTO.getDepartmentAddress())) {
+				savedDepartment.setDepartmentAddress(departmentDTO.getDepartmentAddress());
 			}
-			if (Objects.nonNull(department.getDepartmentCode()) && !"".equalsIgnoreCase(department.getDepartmentCode())) {
-				savedDepartment.setDepartmentCode(department.getDepartmentCode());
+			if (Objects.nonNull(departmentDTO.getDepartmentCode()) && !"".equalsIgnoreCase(departmentDTO.getDepartmentCode())) {
+				savedDepartment.setDepartmentCode(departmentDTO.getDepartmentCode());
 			}
 			
-			return departmentRepository.saveAndFlush(savedDepartment);
+			return departmentTransformer.transformDomainToDTO(departmentRepository.saveAndFlush(savedDepartment));
 			
 		}
 		
-		return departmentRepository.saveAndFlush(department);
+		return null;
 	}
 
 	@Override
@@ -72,8 +76,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 	}
 
 	@Override
-	public Department getDepartmentByName(String departmentName) {
-		return departmentRepository.getDepartmentByName(departmentName);
+	public DepartmentDTO getDepartmentByName(String departmentName) throws TransformerException {
+		return departmentTransformer.transformDomainToDTO(departmentRepository.getDepartmentByName(departmentName));
 	}
 
 	

@@ -15,4 +15,5 @@ public class StudentDTO {
 	@Email
 	private String studentEmail;
 	private String studentCode;
+	private Boolean isActive;
 }
