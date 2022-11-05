@@ -26,7 +26,7 @@ public class GlobalControllerExceptionHandler{
 		response.setResultStatus(ResultStatus.FAILED);
 		response.setHttpStatus(HttpStatus.NOT_FOUND);
 		response.setHttpCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
-		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(value = { TransformerException.class })
@@ -40,7 +40,7 @@ public class GlobalControllerExceptionHandler{
 	}
 	
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
-	protected ResponseEntity<ResultsDTO> handleConstraintViolationException(MethodArgumentNotValidException ex, HttpServletResponse httpServletResponse) {
+	protected ResponseEntity<ResultsDTO> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletResponse httpServletResponse) {
 		ResultsDTO response = new ResultsDTO();
 		response.setMessage(new MessageDTO(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
 		response.setResultStatus(ResultStatus.FAILED);

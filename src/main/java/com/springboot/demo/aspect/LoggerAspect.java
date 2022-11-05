@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -26,13 +27,18 @@ public class LoggerAspect {
     private ObjectMapper mapper;
 	
 	
-	@Pointcut("within(com.springboot.demo.controller..*)  || "
-			+ "within(com.springboot.demo.service..*)")
-	public void beforeExecutionLogger() {
+	@Pointcut("within(com.springboot.demo.controller.*)  || "
+			+ "within(com.springboot.demo.service.*)")
+	public void pointcut() {
 		
 	}
 	
-	@Before("beforeExecutionLogger()")
+	@Pointcut("within(com.springboot.demo.controller.*)")
+	public void exceptionPointcut() {
+		
+	}
+	
+	@Before("pointcut()")
     public void logMethod(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 
@@ -44,6 +50,15 @@ public class LoggerAspect {
         } catch (JsonProcessingException e) {
         	LOGGER.error("Error while converting", e);
         }
+    }
+	
+	
+	@AfterThrowing(pointcut = "exceptionPointcut()", throwing = "ex")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
+		
+		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		LOGGER.error("==> method(s): {}, error: {} ", 
+				signature.getMethod(), ex.getMessage());
     }
 
 	private Map<String, Object> getParameters(JoinPoint joinPoint) {
