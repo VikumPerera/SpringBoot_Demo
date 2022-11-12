@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    url: jdbc:mysql://localhost:3306/springBoot_test
+    password: password
+  jpa:
+    hibernate:
+      use-new-id-generator-mappings: 'false'
+      ddl-auto: update
+    show-sql: 'true'
+my:
+  data: Wlcome to hello controller!!!
+server:
+  port: '8080'

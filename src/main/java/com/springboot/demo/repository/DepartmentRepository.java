@@ -10,7 +10,7 @@ import com.springboot.demo.domain.Department;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 	
-	@Query(nativeQuery = true, value = "SELECT * FROM Department WHERE  department_name = :departmentName")
+	@Query(nativeQuery = true, value = "SELECT * FROM department WHERE  department_name = :departmentName")
 	Department getDepartmentByName(@Param("departmentName") String departmentName);
 
 }
